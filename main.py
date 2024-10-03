@@ -25,8 +25,9 @@ if __name__ == "__main__":
 
     # Load points from dataset
     points: list[Tuple[float, float]] = utils.load_json_file("data.json")
+    points = utils.normalize_dataset(points)
 
-    a, b = polreg.gradient_descent(points, 0.00001, 100)
+    a, b = polreg.gradient_descent(points, 0.01, 10000)
     # Init the regression model and train it
     regression = polreg.PolynomialRegression(1, [a, b], points)
     # regression.train_complete_shuffle(10000)

@@ -59,3 +59,24 @@ def draw_function(screen, fn):
 
     for i in range(len(points) - 1):
         pygame.draw.line(screen, GRAPH_COLOR, virtual_to_screen_coords(points[i]), virtual_to_screen_coords(points[i + 1]), 2)
+
+def normalize_dataset(points: list[Tuple[float, float]]):
+    """ Normalizes dataset to [0, 1] range. """
+
+    x_values = [x for x, y in points]
+    y_values = [y for x, y in points]
+
+    min_x = min(x_values)
+    max_x = max(x_values)
+
+    min_y = min(y_values)
+    max_y = max(y_values)
+
+    normalized_points = [
+        (
+            (x - min_x) / (max_x - min_x),
+            (y - min_y) / (max_y - min_y)
+        )
+        for x, y in points
+    ]
+    return normalized_points
