@@ -12,6 +12,7 @@ WINDOW_HEIGHT = 800
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 BG_COLOR = (40, 40, 40)
+HELP_LABEL_COLOR = (120, 120, 120)
 
 if __name__ == "__main__":
     # Initialize Pygame
@@ -28,6 +29,11 @@ if __name__ == "__main__":
     # Init the regression model and train it
     regression = polreg.PolynomialRegression(1, [1.0, 0.0], points)
     regression.train_complete_shuffle(10000)
+
+    # Prerender Help labels
+    help_font = pygame.font.Font(None, 20)  
+    help_label1 = help_font.render(f"<p> put a point", True, HELP_LABEL_COLOR)
+    help_label2 = help_font.render(f"<s> save points to file", True, HELP_LABEL_COLOR)
 
 
     # Main window loop
@@ -70,6 +76,10 @@ if __name__ == "__main__":
         screen.blit(function_label_surface, (230, 50))
 
         utils.draw_function(screen, regression.predict)
+
+        # Draw help labels
+        screen.blit(help_label1, (10, 10))
+        screen.blit(help_label2, (10, 30))
         
         # Update the display
         pygame.display.flip()
