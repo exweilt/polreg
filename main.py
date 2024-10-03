@@ -34,7 +34,7 @@ if __name__ == "__main__":
     help_font = pygame.font.Font(None, 20)  
     help_label1 = help_font.render(f"<p> put a point", True, HELP_LABEL_COLOR)
     help_label2 = help_font.render(f"<s> save points to file", True, HELP_LABEL_COLOR)
-
+    help_label3 = help_font.render(f"<LMB> drag", True, HELP_LABEL_COLOR)
 
     # Main window loop
     running = True
@@ -58,8 +58,14 @@ if __name__ == "__main__":
                 # Save points to file <Esc>
                 elif event.key == pygame.K_ESCAPE:
                     running = False
+            
+            if event.type == pygame.MOUSEMOTION:
+                if pygame.mouse.get_pressed()[0]:
+                    utils.virtual_origin_pos_shift = (
+                        utils.virtual_origin_pos_shift[0] + event.rel[0],
+                        utils.virtual_origin_pos_shift[1] - event.rel[1],
+                    )
                 
-
         # Clear the screen
         screen.fill(BG_COLOR)
         
@@ -78,8 +84,17 @@ if __name__ == "__main__":
         utils.draw_function(screen, regression.predict)
 
         # Draw help labels
+        cursor_pos = utils.screen_to_virtual_coords(pygame.mouse.get_pos())
+        help_label4 = help_font.render(f"cursor pos: x={    \
+                cursor_pos[0]:.1f
+            } y={
+                cursor_pos[1]:.1f
+            }", True, HELP_LABEL_COLOR)
+        
         screen.blit(help_label1, (10, 10))
         screen.blit(help_label2, (10, 30))
+        screen.blit(help_label3, (10, 50))
+        screen.blit(help_label4, (10, 70))
         
         # Update the display
         pygame.display.flip()
