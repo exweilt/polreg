@@ -26,9 +26,11 @@ if __name__ == "__main__":
     # Load points from dataset
     points: list[Tuple[float, float]] = utils.load_json_file("data.json")
 
+    a, b = polreg.gradient_descent(points, 0.00001, 100)
     # Init the regression model and train it
-    regression = polreg.PolynomialRegression(1, [1.0, 0.0], points)
-    regression.train_complete_shuffle(10000)
+    regression = polreg.PolynomialRegression(1, [a, b], points)
+    # regression.train_complete_shuffle(10000)
+    # regression.train_gradient_descent(10)
 
     # Prerender Help labels
     help_font = pygame.font.Font(None, 20)  
@@ -52,8 +54,8 @@ if __name__ == "__main__":
                     points.append(utils.screen_to_virtual_coords((mouse_x, mouse_y)))
 
                 # Save points to file <s>
-                elif event.key == pygame.K_p:
-                    utils.save_points_to_json(points, "data1.json")
+                elif event.key == pygame.K_s:
+                    utils.save_points_to_json(points, "data.json")
                 
                 # Save points to file <Esc>
                 elif event.key == pygame.K_ESCAPE:

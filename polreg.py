@@ -5,6 +5,39 @@ from typing import Tuple
 
 import utils
 
+def gradient_descent(points, learning_rate=0.01, num_iterations=1000):
+    """
+    Performs gradient descent to find the coefficients a and b for y = ax + b.
+
+    :param points: A list of tuples, where each tuple is (x, y).
+    :param learning_rate: The learning rate for gradient descent.
+    :param num_iterations: The number of iterations to perform.
+    :return: The coefficients a and b.
+    """
+    # Initialize coefficients
+    a = 0.0  # slope
+    b = 0.0  # intercept
+
+    n = len(points)  # Number of data points
+
+    for _ in range(num_iterations):
+        # Initialize gradients
+        gradient_a = 0.0
+        gradient_b = 0.0
+
+        # Calculate gradients
+        for x, y in points:
+            prediction = a * x + b
+            error = prediction - y
+            gradient_a += (2 / n) * error * x  # Partial derivative w.r.t a
+            gradient_b += (2 / n) * error        # Partial derivative w.r.t b
+
+        # Update coefficients
+        a -= learning_rate * gradient_a
+        b -= learning_rate * gradient_b
+
+    return a, b
+
 class PolynomialRegression:
     coeff_letter_binding = ["a", "b", "c", "d", "e", "f"]
 
@@ -26,7 +59,7 @@ class PolynomialRegression:
         return y
     
     def loss(self):
-        error = 0
+        error = 0.0
         for p in self.points:
             error += pow(self.predict(p[0]) - p[1], 2)
         return error
@@ -80,3 +113,32 @@ class PolynomialRegression:
         self.coefficients = best_coeffs
 
         print(f"Training finished. Best loss: { self.loss() }")
+
+    # Returns history of coefficients change
+    def train_gradient_descent(self, num_iter: int = 100) -> list[list[float]]:
+        assert self.degree == 1 # only 1st degree now
+
+        LEARNING_RATE = 0.00000001
+        STEP_SIZE = 0.000001
+
+        for iter_idx in range(num_iter):
+            loss = self.loss()
+
+            # Gradient for b
+            mutated_coeffs_b = copy.deepcopy(self.coefficients)
+            mutated_coeffs_b[1] += STEP_SIZE
+            new_loss = PolynomialRegression(self.degree, mutated_coeffs_b, self.points).loss()
+            Grad_b = (new_loss - loss) / STEP_SIZE
+
+            # Gradient for a
+            mutated_coeffs_a = copy.deepcopy(self.coefficients)
+            mutated_coeffs_a[0] += STEP_SIZE
+            new_loss = PolynomialRegression(self.degree, mutated_coeffs_a, self.points).loss()
+            Grad_a = (new_loss - loss) / STEP_SIZE
+
+            # Mutate
+            self.coefficients[0] -= Grad_a * LEARNING_RATE
+            self.coefficients[1] -= Grad_b * LEARNING_RATE
+
+            print(f"Iteration {iter_idx} finished. New Loss = {self.loss()}")
+            print(f"a = {self.coefficients[0]}, b = {self.coefficients[1]} \n")
