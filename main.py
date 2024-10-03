@@ -23,24 +23,35 @@ if __name__ == "__main__":
     font = pygame.font.Font(None, 40)  
 
     # Load points from dataset
-    points: list[Tuple[float, float]] = utils.load_json_file()
+    points: list[Tuple[float, float]] = utils.load_json_file("data.json")
 
     # Init the regression model and train it
     regression = polreg.PolynomialRegression(1, [1.0, 0.0], points)
-    regression.train_complete_shuffle(1000000)
+    regression.train_complete_shuffle(10000)
+
 
     # Main window loop
-    while True:
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                #utils.save_points_to_json(points)
-                pygame.quit()
-                sys.exit()
+                running = False
 
-            # if event.type == pygame.MOUSEBUTTONDOWN:
-            #     mouse_x, mouse_y = event.pos
+            # Keyboard Handler
+            if event.type == pygame.KEYDOWN:
+                # Add point under cursor <p>
+                if event.key == pygame.K_p:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
 
-            #     points.append(utils.screen_to_virtual_coords((mouse_x, mouse_y)))
+                    points.append(utils.screen_to_virtual_coords((mouse_x, mouse_y)))
+
+                # Save points to file <s>
+                elif event.key == pygame.K_p:
+                    utils.save_points_to_json(points, "data1.json")
+                
+                # Save points to file <Esc>
+                elif event.key == pygame.K_ESCAPE:
+                    running = False
                 
 
         # Clear the screen
@@ -62,3 +73,6 @@ if __name__ == "__main__":
         
         # Update the display
         pygame.display.flip()
+    
+    pygame.quit()
+    sys.exit()

@@ -5,7 +5,7 @@ import json
 AXIS_COLOR = (160, 160, 160)
 POINT_COLOR = (200, 200, 200)
 GRAPH_COLOR = (255, 255, 255)
-FILENAME = "data.json"
+DEFAULT_FILENAME = "data.json"
 
 virtual_origin_pos_shift = (200, -600)
 
@@ -24,12 +24,12 @@ def draw_point_at_position(surface, position: Tuple[float, float]):
     pygame.draw.circle(surface, POINT_COLOR, virtual_to_screen_coords(position), 5)
     # pygame.draw.circle(surface, POINT_COLOR, virtual_to_screen_coords(position), 8)
 
-def save_points_to_json(data: list):
-    with open(FILENAME, 'w') as file:
+def save_points_to_json(data: list, filename: str = DEFAULT_FILENAME):
+    with open(filename, 'w') as file:
         json.dump(data, file, indent=4)
 
-def load_json_file() -> list[Tuple[float, float]]:
-    with open(FILENAME, 'r') as file:
+def load_json_file(filename: str = DEFAULT_FILENAME) -> list[Tuple[float, float]]:
+    with open(filename, 'r') as file:
         return json.load(file)
     
 digit_to_superscript_mapping = {
