@@ -38,6 +38,7 @@ if __name__ == "__main__":
     help_label1 = help_font.render(f"<p> put a point", True, HELP_LABEL_COLOR)
     help_label2 = help_font.render(f"<s> save points to file", True, HELP_LABEL_COLOR)
     help_label3 = help_font.render(f"<LMB> drag", True, HELP_LABEL_COLOR)
+    help_label7 = help_font.render(f"<scroll> zoom in/out", True, HELP_LABEL_COLOR)
 
     # Main window loop
     running = True
@@ -62,12 +63,23 @@ if __name__ == "__main__":
                 elif event.key == pygame.K_ESCAPE:
                     running = False
             
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 4:
+                    utils.zoom(event.pos, 1.05)
+                if event.button == 5:
+                    utils.zoom(event.pos, 0.95)
+                    # buf_width = utils.screen_to_virtual_coords((800, 800))[0]
+                    # utils.scale /= 1.01
+                    # rect_change = utils.screen_to_virtual_coords((800, 800))[0] - buf_width
+                    # print (rect_change)
+                    # utils.virtual_origin_pos_shift[0] - rect_change
+                    # utils.virtual_origin_pos_shift[1] + rect_change
             if event.type == pygame.MOUSEMOTION:
                 if pygame.mouse.get_pressed()[0]:
-                    utils.virtual_origin_pos_shift = (
-                        utils.virtual_origin_pos_shift[0] + event.rel[0],
-                        utils.virtual_origin_pos_shift[1] - event.rel[1],
-                    )
+                    utils.virtual_origin_pos_shift = [
+                        utils.virtual_origin_pos_shift[0] + event.rel[0] * utils.scale,
+                        utils.virtual_origin_pos_shift[1] - event.rel[1] * utils.scale,
+                    ]
                 
         # Clear the screen
         screen.fill(BG_COLOR)
@@ -89,15 +101,21 @@ if __name__ == "__main__":
         # Draw help labels
         cursor_pos = utils.screen_to_virtual_coords(pygame.mouse.get_pos())
         help_label4 = help_font.render(f"cursor pos: x={    \
-                cursor_pos[0]:.1f
+                cursor_pos[0]:.4f
             } y={
-                cursor_pos[1]:.1f
+                cursor_pos[1]:.4f
             }", True, HELP_LABEL_COLOR)
+        
+        help_label5 = help_font.render(f"scale = {utils.scale:.3f}", True, HELP_LABEL_COLOR)
+        help_label6 = help_font.render(f"shift x = {utils.virtual_origin_pos_shift[0]:.3f}, y = {utils.virtual_origin_pos_shift[1]:.3f}", True, HELP_LABEL_COLOR)
         
         screen.blit(help_label1, (10, 10))
         screen.blit(help_label2, (10, 30))
         screen.blit(help_label3, (10, 50))
-        screen.blit(help_label4, (10, 70))
+        screen.blit(help_label7, (10, 70))
+        screen.blit(help_label4, (10, 90))
+        screen.blit(help_label5, (10, 110))
+        screen.blit(help_label6, (10, 130))
         
         # Update the display
         pygame.display.flip()
